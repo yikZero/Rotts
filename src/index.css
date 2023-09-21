@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "Inter","PingFang SC","PingFang","Lantinghei SC","HiraginoSansGB-W3","Microsoft Yahei","Helvetica Neue",Helvetica,Arial,sans-serif;
+}
