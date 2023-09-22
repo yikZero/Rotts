@@ -23,7 +23,7 @@ export default function VoicesList({ onChange }: VoicesListProps) {
   );
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/listVoices")
+    fetch("/api/listVoices")
       .then((res) => {
         if (!res.ok) {
           throw new Error("Network response was not ok");
