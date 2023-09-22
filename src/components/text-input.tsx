@@ -3,7 +3,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { ChangeEvent, useEffect, useState } from "react";
 
-const maxTextLength = 8000; //最大文本长度
+const maxTextLength = 500; //最大文本长度
 
 interface TextInputProps {
   className?: string;
