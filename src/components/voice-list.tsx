@@ -5,26 +5,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 interface Voice {
   Name: string;
+  ShortName: string;
   Gender: string;
   Description: string;
 }
-
-type VoiceNameMapping = {
-  [key: string]: string;
-};
-
-const voiceNameMapping: VoiceNameMapping = {
-  "zh-CN-YunjianNeural": "云健",
-  "zh-CN-YunxiNeural": "云希",
-  "zh-CN-YunxiaNeural": "云夏",
-  "zh-CN-YunyangNeural": "云扬",
-  "zh-CN-XiaobeiNeural": "晓贝",
-  "zh-CN-XiaoniNeural": "晓妮",
-  "zh-CN-XiaoxiaoNeural": "晓晓",
-  "zh-CN-XiaoyiNeural": "晓伊",
-  "zh-CN-liaoning-XiaobeiNeural": "辽宁晓蓓",
-  "zh-CN-shaanxi-XiaoniNeural": "陕西晓妮",
-};
 
 interface VoicesListProps {
   onChange?: (selectedVoice: string) => void;
@@ -39,7 +23,7 @@ export default function VoicesList({ onChange }: VoicesListProps) {
   );
 
   useEffect(() => {
-    fetch("/api/listVoices")
+    fetch("http://127.0.0.1:8000/api/listVoices")
       .then((res) => {
         if (!res.ok) {
           throw new Error("Network response was not ok");
@@ -47,45 +31,28 @@ export default function VoicesList({ onChange }: VoicesListProps) {
         return res.json();
       })
       .then((data) => {
-        const updatedVoices = data.listVoices.map((voice: Voice) => {
-          return {
-            Name: voiceNameMapping[voice.Name] || voice.Name,
-            Gender: voice.Gender,
-            Description:
-              voiceNameMapping[voice.Description] || voice.Description,
-          };
-        });
-        setAvailableVoices(updatedVoices);
+        setAvailableVoices(data.listVoices);
 
-        // 默认选中第一个语音
-        if (updatedVoices.length > 0) {
-          const firstVoice = updatedVoices[0].Name;
-          setSelectedVoice(firstVoice);
-          const originalVoiceName = Object.keys(voiceNameMapping).find(
-            (key) => voiceNameMapping[key] === firstVoice
-          );
-          if (onChange && originalVoiceName) {
-            onChange(originalVoiceName);
-          }
+      // 默认选中第一个语音
+      if (data.listVoices.length > 0) {
+        const firstVoice = data.listVoices[0].Name;
+        setSelectedVoice(firstVoice);
+        if (onChange) {
+          onChange(firstVoice);
         }
-      })
-      .catch((error) => {
-        console.error("Fetch error:", error);
-      });
-  }, []);
+      }
+    })
+    .catch((error) => {
+      console.error("Fetch error:", error);
+    });
+}, []);
 
-  const handleVoiceSelect = (voiceName: string) => {
-    setSelectedVoice(voiceName);
-
-    // 反向查找原始名字
-    const originalVoiceName = Object.keys(voiceNameMapping).find(
-      (key) => voiceNameMapping[key] === voiceName
-    );
-
-    if (onChange && originalVoiceName) {
-      onChange(originalVoiceName);
-    }
-  };
+const handleVoiceSelect = (voiceName: string) => {
+  setSelectedVoice(voiceName);
+  if (onChange) {
+    onChange(voiceName);
+  }
+};
 
   return (
     <>
@@ -122,7 +89,7 @@ export default function VoicesList({ onChange }: VoicesListProps) {
             filteredVoices.map((voice) => (
               <Choicebox
                 key={voice.Name}
-                title={voice.Name}
+                title={voice.ShortName}
                 description={voice.Description}
                 isSelected={selectedVoice === voice.Name}
                 onSelect={() => handleVoiceSelect(voice.Name)}

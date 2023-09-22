@@ -43,6 +43,7 @@ export default function PitchSelector({ defaultValue, onChange }: PitchSelectorP
           />
         </div>
         <Slider
+          disabled
           id="Pitch"
           max={maxPitchValue}
           value={value}
@@ -51,7 +52,7 @@ export default function PitchSelector({ defaultValue, onChange }: PitchSelectorP
           step={1}
           onValueChange={handleValueChange}
           className="[&_[role=slider]]:h-4 [&_[role=slider]]:w-4"
-          aria-label="语速"
+          aria-label="音高"
         />
       </div>
     </>

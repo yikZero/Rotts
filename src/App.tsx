@@ -50,7 +50,7 @@ export default function App() {
 
     setIsGenerating(true);
 
-    const res = await fetch("/api/generateSpeech", {
+    const res = await fetch("http://127.0.0.1:8000/api/generateSpeech", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text, voice, rate, volume, pitch }),

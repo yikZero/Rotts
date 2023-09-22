@@ -38,4 +38,4 @@ npm run dev
 cd api
 pip install -r requirements.txt
 source venv/bin/activate
-FLASK_APP=index.py flask run
+uvicorn main:app --reload

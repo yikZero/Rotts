@@ -3,14 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from io import BytesIO
-import edge_tts
-import subprocess
+from edge_tts import Communicate
 
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173",  # 本地开发环境
-    "https://rotts.yikzero.com",  # 线上环境
+    "http://localhost:5173",
+    "https://*.vercel.app",
+    "https://*.yikzero.com",
 ]
 
 app.add_middleware(
@@ -21,6 +21,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 class SpeechData(BaseModel):
     text: str
     voice: str
@@ -28,68 +29,92 @@ class SpeechData(BaseModel):
     volume: int
     pitch: int
 
-def generateSpeech(text, voice, rate, volume, pitch, mp3Data):
-    cmd = ["edge-tts", "--text", text, "--voice", voice]
 
-    if rate != 0:
-        cmd.extend([f"--rate={'+' if rate > 0 else ''}{rate}%"])
-    if volume != 0:
-        cmd.extend([f"--volume={'+' if volume > 0 else ''}{volume}%"])
-    if pitch != 0:
-        cmd.extend([f"--pitch={'+' if pitch > 0 else ''}{pitch}Hz"])
+async def generateSpeech(text, voice, rate, volume, pitch, mp3Data):
 
-    result = subprocess.run(cmd, stdout=subprocess.PIPE)
-    mp3Data.write(result.stdout)
+    rate_str = f"{rate:+d}%"
+    volume_str = f"{volume:+d}%"
+    # pitch_str = f"{pitch:+d}Hz"
+
+    communicate = Communicate(text, voice, rate=rate_str, volume=volume_str)
+    mp3Data = BytesIO()
+    async for message in communicate.stream():
+        if message["type"] == "audio":
+            mp3Data.write(message["data"])
+
+    mp3Data.seek(0)
+    return mp3Data
 
 
 @app.post("/api/generateSpeech")
 async def generateSpeechRoute(data: SpeechData):
     mp3Data = BytesIO()
-    generateSpeech(data.text, data.voice, data.rate, data.volume, data.pitch, mp3Data)
-    mp3Data.seek(0)
-    return StreamingResponse(mp3Data, headers={"Content-Type": "audio/mp3", "Content-Disposition": "attachment; filename=generated_speech.mp3"})
+    mp3Data = await generateSpeech(data.text, data.voice, data.rate, data.volume, data.pitch, mp3Data)
 
-def getDescriptionByName(name):
-    descriptions = {
-        "zh-CN-YunjianNeural": "体育解说风格",
-        "zh-CN-YunxiNeural": "轻松叙述 聊天",
-        "zh-CN-YunxiaNeural": "情感比较丰富",
-        "zh-CN-YunyangNeural": "专业性较强",
-        "zh-CN-XiaobeiNeural": "暂无数据",
-        "zh-CN-XiaoniNeural": "暂无数据",
-        "zh-CN-XiaoxiaoNeural": "暂无数据",
-        "zh-CN-XiaoyiNeural": "暂无数据",
-        "zh-CN-liaoning-XiaobeiNeural": "辽宁口音 亲切",
-        "zh-CN-shaanxi-XiaoniNeural": "山西口音",
-    }
-    return descriptions.get(name, "暂无数据")
+    return StreamingResponse(
+        mp3Data,
+        headers={
+            "Content-Type": "audio/mp3",
+            "Content-Disposition": "attachment; filename=generated_speech.mp3"
+        }
+    )
 
-def parseVoices(lines):
-    voices = []
-    
-    for i in range(0, len(lines), 3):
-        name = lines[i].split(": ")[1]
-        gender = lines[i + 1].split(": ")[1]
-        
-        if not name.startswith("zh-CN"):
-            continue
-        
-        description = getDescriptionByName(name)
-        voiceInfo = {"Name": name, "Gender": gender, "Description": description}
-        voices.append(voiceInfo)
-            
-    sortedVoices = sorted(voices, key=lambda x: x['Gender'], reverse=True)
-            
-    return {"listVoices": sortedVoices}
-
-voiceCache = None
 
 @app.get("/api/listVoices")
 async def listVoices():
-    result = subprocess.run(['edge-tts', '--list-voices'], stdout=subprocess.PIPE)
-    voices = result.stdout.decode('utf-8').splitlines()
-    voiceData = parseVoices(voices)
-    return voiceData
+    return {
+        "listVoices": [
+            {
+                "Name": "zh-CN-YunjianNeural",
+                "Gender": "Male",
+                "Description": "体育解说风格",
+                "ShortName": "云健"
+            },
+            {
+                "Name": "zh-CN-YunxiNeural",
+                "Gender": "Male",
+                "Description": "轻松叙述 聊天",
+                "ShortName": "云希"
+            },
+            {
+                "Name": "zh-CN-YunxiaNeural",
+                "Gender": "Male",
+                "Description": "情感比较丰富",
+                "ShortName": "云夏"
+            },
+            {
+                "Name": "zh-CN-YunyangNeural",
+                "Gender": "Male",
+                "Description": "专业性较强",
+                "ShortName": "云扬"
+            },
+            {
+                "Name": "zh-CN-XiaoxiaoNeural",
+                "Gender": "Female",
+                "Description": "暂无数据",
+                "ShortName": "晓晓"
+            },
+            {
+                "Name": "zh-CN-XiaoyiNeural",
+                "Gender": "Female",
+                "Description": "暂无数据",
+                "ShortName": "晓伊"
+            },
+            {
+                "Name": "zh-CN-liaoning-XiaobeiNeural",
+                "Gender": "Female",
+                "Description": "辽宁口音 亲切",
+                "ShortName": "辽宁晓蓓"
+            },
+            {
+                "Name": "zh-CN-shaanxi-XiaoniNeural",
+                "Gender": "Female",
+                "Description": "山西口音",
+                "ShortName": "陕西晓妮"
+            }
+        ]
+    }
+
 
 @app.get("/")
 def home():

@@ -30,7 +30,7 @@ export default function VolumeSelector({ defaultValue, onChange }: VolumeSelecto
       <div className="grid gap-2">
         <div className="flex items-center justify-between">
           <Label htmlFor="volume" className="text-base">
-            音量（dB）
+            音量（%）
           </Label>
           <Input
             disabled
