@@ -26,6 +26,10 @@
 - [Shadcn UI](https://ui.shadcn.com/)
 - [Tailwind CSS](https://tailwindcss.com/)
 
+## Deploy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FyikZero%2FRotts&project-name=rotts&repository-name=rotts)
+
 ## Local Environment Setup
 
 ```bash
