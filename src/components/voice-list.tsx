@@ -33,26 +33,26 @@ export default function VoicesList({ onChange }: VoicesListProps) {
       .then((data) => {
         setAvailableVoices(data.listVoices);
 
-      // 默认选中第一个语音
-      if (data.listVoices.length > 0) {
-        const firstVoice = data.listVoices[0].Name;
-        setSelectedVoice(firstVoice);
-        if (onChange) {
-          onChange(firstVoice);
+        // 默认选中第一个语音
+        if (data.listVoices.length > 0) {
+          const firstVoice = data.listVoices[0].Name;
+          setSelectedVoice(firstVoice);
+          if (onChange) {
+            onChange(firstVoice);
+          }
         }
-      }
-    })
-    .catch((error) => {
-      console.error("Fetch error:", error);
-    });
-}, []);
+      })
+      .catch((error) => {
+        console.error("Fetch error:", error);
+      });
+  }, []);
 
-const handleVoiceSelect = (voiceName: string) => {
-  setSelectedVoice(voiceName);
-  if (onChange) {
-    onChange(voiceName);
-  }
-};
+  const handleVoiceSelect = (voiceName: string) => {
+    setSelectedVoice(voiceName);
+    if (onChange) {
+      onChange(voiceName);
+    }
+  };
 
   return (
     <>
@@ -99,10 +99,16 @@ const handleVoiceSelect = (voiceName: string) => {
             <>
               {Array.from({ length: filteredVoices.length || 4 }).map(
                 (_, index) => (
-                  <Skeleton
+                  <div
                     key={index}
-                    className="w-full h-[76px] rounded-md"
-                  />
+                    className="w-full h-[76px] rounded-md border border-[#EBEBEB] flex flex-row items-center justify-between p-3"
+                  >
+                    <div className="flex flex-col gap-y-1 justify-center">
+                      <Skeleton className="w-10 h-4" />
+                      <Skeleton className="w-24 h-4" />
+                    </div>
+                    <Skeleton className="w-4 h-4 rounded-full" />
+                  </div>
                 )
               )}
             </>
