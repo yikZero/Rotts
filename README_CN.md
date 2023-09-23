@@ -1,7 +1,7 @@
 <h4 align="right"><a href="https://github.com/yikZero/Rotts/blob/main/README.md">English</a> | <strong>简体中文</strong></h4>
 <h1 align="center">Rotts</h1>
 
-<p align="center"><strong>全栈应用，前端使用React和TypeScript，后端使用Python，运行在Vercel平台。</strong></p>
+<p align="center"><strong>全栈Web服务，前端使用React，后端使用Python。集成Edge文本转语音，支持多语言和语音定制。</strong></p>
 
 <div align="center">
     <a href="https://twitter.com/yikZero" target="_blank">
