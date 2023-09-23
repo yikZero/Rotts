@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ReactPlayer from "react-player";
 
 import TextInput from "./components/text-input";
 import VoicesList from "./components/voice-list";
@@ -6,7 +7,7 @@ import VolumeSelector from "./components/volume-selector";
 import RateSelector from "./components/rate-selector";
 import PitchSelector from "./components/pitch-selector";
 import { Button } from "./components/ui/button";
-import { Play, Pause, Loader2 } from "lucide-react";
+import { Speech, Loader2 } from "lucide-react";
 
 import { productName } from "./metadata";
 
@@ -34,18 +35,12 @@ export default function App() {
 
     if (
       JSON.stringify(lastParams) ===
-      JSON.stringify({ text, voice, rate, volume, pitch })
+        JSON.stringify({ text, voice, rate, volume, pitch }) &&
+      audio &&
+      audio.paused
     ) {
-      if (audio) {
-        if (audio.paused) {
-          audio.play();
-          setIsPlaying(true); // 设置为正在播放
-        } else {
-          audio.pause();
-          setIsPlaying(false); // 设置为暂停
-        }
-        return;
-      }
+      audio.play();
+      return;
     }
 
     setIsGenerating(true);
@@ -61,13 +56,19 @@ export default function App() {
     if (res.ok) {
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
+
+      // 停止并释放旧的 Audio 对象
+      if (audio) {
+        audio.pause();
+        audio.src = "";
+      }
+
       setAudioUrl(url);
       const newAudio = new Audio(url);
       newAudio.play();
       setAudio(newAudio);
 
       setLastParams({ text, voice, rate, volume, pitch });
-      newAudio.addEventListener("ended", () => setIsPlaying(false));
       setIsPlaying(true);
     }
   };
@@ -109,6 +110,12 @@ export default function App() {
               defaultValue={[0]}
               onChange={(newValue) => setPitch(newValue[0])}
             />
+            <ReactPlayer
+              url={audioUrl}
+              width="100%"
+              height="48px"
+              playing={isPlaying}
+            />
             <div className="flex flex-row gap-3 mt-4">
               <Button
                 className="w-full"
@@ -120,15 +127,10 @@ export default function App() {
                     <Loader2 className="mr-1 h-4 w-4 animate-spin" />
                     生成中...
                   </>
-                ) : isPlaying ? (
-                  <>
-                    <Pause className="mr-1 h-4 w-4" />
-                    暂停播放
-                  </>
                 ) : (
                   <>
-                    <Play className="mr-1 h-4 w-4" />
-                    在线播放
+                    <Speech className="mr-1 h-4 w-4" />
+                    开始转化
                   </>
                 )}
               </Button>
@@ -136,7 +138,7 @@ export default function App() {
                 className="w-full"
                 variant="secondary"
                 onClick={downloadAudio}
-                disabled={!audioUrl}
+                disabled={isGenerating || !audioUrl}
               >
                 下载音频
               </Button>
