@@ -1,7 +1,7 @@
 <h4 align="right"><strong>English</strong> | <a href="https://github.com/yikZero/Rotts/blob/main/README_CN.md">简体中文</a></h4>
 <h1 align="center">Rotts</h1>
 
-<p align="center"><strong>A full-stack application running on Vercel, featuring a frontend built with React and TypeScript and a backend in Python.</strong></p>
+<p align="center"><strong>Full-stack web service with React frontend and Python backend. Features Edge text-to-speech and supports multiple languages and voice customization.</strong></p>
 
 <div align="center">
     <a href="https://twitter.com/yikZero" target="_blank">
