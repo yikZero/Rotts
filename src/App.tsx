@@ -7,6 +7,11 @@ import RateSelector from "@/components/rate-selector";
 import PitchSelector from "@/components/pitch-selector";
 import RottsPlayer from "@/components/rotts-player";
 import { Button } from "@/components/ui/button";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card";
 import { Speech, Loader2 } from "lucide-react";
 
 import { productName } from "./metadata";
@@ -93,23 +98,29 @@ export default function App() {
                 {showPlayer && <RottsPlayer audioUrl={audioUrl} />}
               </div>
               <div className="flex flex-row gap-3">
-                <Button
-                  className="w-full"
-                  onClick={generateSpeech}
-                  disabled={isGenerating || !text}
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-                      生成中...
-                    </>
-                  ) : (
-                    <>
-                      <Speech className="mr-1 h-4 w-4" />
-                      开始转化
-                    </>
-                  )}
-                </Button>
+                <HoverCard>
+                  <HoverCardTrigger className="w-full whitespace-nowrap">
+                    <Button
+                      onClick={generateSpeech}
+                      disabled={isGenerating || !text}
+                    >
+                      {isGenerating ? (
+                        <>
+                          <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                          生成中...
+                        </>
+                      ) : (
+                        <>
+                          <Speech className="mr-1 h-4 w-4" />
+                          开始转化
+                        </>
+                      )}
+                    </Button>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="text-sm text-gray-700 p-3">
+                    调整配置信息后需再次点击按钮生成语音。
+                  </HoverCardContent>
+                </HoverCard>
                 <Button
                   className="w-full"
                   variant="secondary"
