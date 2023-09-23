@@ -43,7 +43,7 @@ export default function TextInput({
               本次最多可输入 {maxTextLength} 文本，剩余 {remainTextsNumber} 文本可输入。
             </p>
             <Textarea
-              rows={20}
+              rows={22}
               maxLength={maxTextLength}
               placeholder="请输入需要转语音的文本"
               value={text}
