@@ -27,7 +27,7 @@ export default function PitchSelector({ defaultValue, onChange }: PitchSelectorP
 
   return (
     <>
-      <div className="grid gap-2">
+      <div className="grid gap-2 hidden">
         <div className="flex items-center justify-between">
           <Label htmlFor="Pitch" className="text-base">
             音高（Hz）
