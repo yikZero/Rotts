@@ -99,20 +99,21 @@ export default function App() {
               </div>
               <div className="flex flex-row gap-3">
                 <HoverCard>
-                  <HoverCardTrigger className="w-full whitespace-nowrap">
+                  <HoverCardTrigger className="w-full">
                     <Button
+                      className="w-full"
                       onClick={generateSpeech}
                       disabled={isGenerating || !text}
                     >
                       {isGenerating ? (
                         <>
                           <Loader2 className="mr-1 h-4 w-4 animate-spin" />
-                          生成中...
+                          <span className="w-16">生成中...</span>
                         </>
                       ) : (
                         <>
                           <Speech className="mr-1 h-4 w-4" />
-                          开始转化
+                          <span className="w-16">开始转化</span>
                         </>
                       )}
                     </Button>
