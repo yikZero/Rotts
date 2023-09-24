@@ -67,11 +67,11 @@ export default function App() {
 
   return (
     <>
-      <div className="flex flex-col gap-6 max-w-4xl mx-auto justify-center h-screen -mt-12">
-        <h1 className="text-2xl font-bold text-gray-900">{productName}</h1>
-        <div className="grid grid-cols-12 gap-6">
+      <div className="flex flex-col gap-6 max-w-4xl mx-auto pb-12 sm:px-0 py-8 sm:py-0 px-4 sm:justify-center sm:h-screen">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{productName}</h1>
+        <div className="flex flex-col sm:grid sm:grid-cols-12 gap-6">
           <TextInput className="col-span-7 h-full" onChange={setText} />
-          <div className="col-span-5 flex flex-col justify-between">
+          <div className="col-span-5 flex flex-col justify-between mt-2 sm:mt-0">
             <div className="flex flex-col gap-6">
               <VoicesList onChange={setVoice} />
               <VolumeSelector
@@ -87,7 +87,7 @@ export default function App() {
                 onChange={(newValue) => setPitch(newValue[0])}
               />
             </div>
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4 mt-12 sm:mt-0">
               <div
                 className={`transition-all duration-300 ease-in-out transform ${
                   showPlayer
@@ -97,7 +97,7 @@ export default function App() {
               >
                 {showPlayer && <RottsPlayer audioUrl={audioUrl} />}
               </div>
-              <div className="flex flex-row gap-3">
+              <div className="flex flex-row gap-3 sm:mt-0 mt-8">
                 <HoverCard>
                   <HoverCardTrigger className="w-full">
                     <Button
